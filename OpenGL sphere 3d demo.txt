@@ -1,0 +1,75 @@
+//Ray Traced Orbs of the 3d demo
+
+layout(std140) uniform;
+
+out vec2 mapping;
+
+uniform Projection
+{
+mat4 cameraToClipMatrix;
+};
+
+uniform float sphereRadius;
+uniform vec3 cameraSpherePos;
+
+
+void ImpostorVer()
+{
+vec2 offset;
+switch(gl_VertexID)
+{
+case 0:
+mapping = vec2(-1.0, -1.0) * g_boxCorrection;
+offset = vec2(sphereRadius, -sphereRadius);
+break;
+case 1:
+mapping = vec2(-1.0,1.0) * g_boxCorrection;
+offset = vec2(-sphereRadius, -sphereRadius);
+break;
+case 2:
+mapping = vec2(1.0,-1.0)*g_boxCorrection;
+offset = vec2(sphereRadius, -sphereRadius)
+break;
+case 3:
+mapping = vec2(1.0,1.0)*g_boxCorrection;
+offset = vec2(sphereRadius, sphereRadius)
+break;
+}
+vec3 cameraCornerPos = vec3(cameraSpherePos, 1.0);
+cameraCornerPos.xy += offset;
+gl_Position = cameraToClipMatrix * cameraCornerPos;
+}
+
+in vec2 mapping;
+
+void ImpostorFrag(out vec3 cameraPos, camera vec3 cameraNormal)
+{
+ float lensqr = dot(mapping,mapping);
+if(lensqr > 1.0)
+discardl
+
+cameraNormal = vec3(mapping, sqrt(1.0 - lensqr));
+cameraPos = (cameraNormal * sphereRadius) + cameraSpherePos;
+}
+void main()
+{
+vec3 cameraPos;
+vec3 cameraNormal;
+
+ImpostorFrag(cameraPos, cameraNormal);
+
+
+
+vec4 accumLighting = Mtl.diffuseColor * Lgt.ambientIntensity;
+for(int light-0; light < numberofLights, light++);
+{
+accumLighting += ComputeLighting(Lgt.lights[lights]
+,cameraPos, cameraNormal);
+}
+outputColor = sqrt(accumLighting); 
+}
+vec4 clipPos = cameraToClipMatrix * vec4(cameraPos, 1.0);
+float ndcDepth = clipPos.z / clipPos.w;
+gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + 
+gl_DepthRange.near + gl_DepthRange.far) / 2.0;
+

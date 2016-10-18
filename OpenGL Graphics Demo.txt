@@ -1,0 +1,22 @@
+#a 3d graphics demo
+
+std::string filename(LOCAL_FILE_DIR);
+filename += "checker.dds";
+
+std::auto_ptr<glimg::ImageSet> pImageSet(glimg::loaders::dds::LoadFromFile(filename.c_str()));
+glGenTexture(1, &g_checkerTexture);
+glBindTexture(GL_TEXTURE_2D, g_checkerTexture);
+for(int mipmapLevel = 0; mipmapLevel <pImageSet->GetMipMapCount(); mipmapLevel++)
+{
+glimg::SingleImage image = pImageSet->GetImage(mipmapLevel, 0, 0);
+
+glTexImage2d(GL_TEXTURE_2D, mipmapLevel, GL_RGB8, dims.width, dims.height, 0,
+GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, image.GetImageData());
+}
+
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, pImageSet->GetMipmapCount() - 1);
+glBindTexture(GL_TEXTURE_2D, 0);
+
+glSampleParameteri(glsamplers[2]  GL_TEXTURE_MAG_FILTER GL_LINEAR);
+glSampleParameteri(glsamplers[2]  GL_TEXTURE_MAG_FILTER GL_LINEAR);
